@@ -168,3 +168,15 @@ bool AdaptiveCachingSystem::isNeededImmediately(const Resource& resource) {
     // Example: Check if a texture is needed for the next frame or an audio for an upcoming event
     return gameEngine.checkResourceDemand(resource.name);
 }
+
+
+void AdaptiveCachingSystem::balanceResourceLoad() {
+    auto resources = getResourcesToCache();
+    distributeResourcesEvenly(resources);
+}
+
+void AdaptiveCachingSystem::distributeResourcesEvenly(const std::vector<Resource>& resources) {
+    // Distribute loading tasks across available threads to minimize load time and avoid bottlenecks
+    threadPool.distributeTasks(resources);
+}
+
