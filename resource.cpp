@@ -176,7 +176,22 @@ void AdaptiveCachingSystem::balanceResourceLoad() {
 }
 
 void AdaptiveCachingSystem::distributeResourcesEvenly(const std::vector<Resource>& resources) {
-    // Distribute loading tasks across available threads to minimize load time and avoid bottlenecks
-    threadPool.distributeTasks(resources);
+    ThreadPool threadPool(std::thread::hardware_concurrency()); // Create pool
+    for (auto& resource : resources) {
+        threadPool.enqueue([this, resource]() {
+            this->loadResourceToMemory(resource);
+        });
+    }
+}
+void AdaptiveCachingSystem::monitorResourceUsage() {
+    auto resources = getResourcesToCache();
+    for (auto& resource : resources) {
+        trackResourceUsage(resource);
+    }
+}
+
+void AdaptiveCachingSystem::trackResourceUsage(const Resource& resource) {
+    // Log and monitor how often and when a resource is accessed
+    resourceUsageLogger.logAccess(resource.name);
 }
 
