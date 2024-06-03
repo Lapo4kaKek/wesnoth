@@ -146,3 +146,25 @@ void AdaptiveCachingSystem::loadResource(Resource& resource) {
 void AdaptiveCachingSystem::addToCacheTable(Resource& resource) {
     std::cout << "Resource added to cache: " << resource.name << std::endl;
 }
+void AdaptiveCachingSystem::prioritizeResourcesDynamically() {
+    auto resources = getResourcesToCache();
+    std::vector<Resource> prioritizedResources;
+
+    // Prioritize resources based on current game state
+    for (auto& resource : resources) {
+        if (isNeededImmediately(resource)) {
+            prioritizedResources.push_back(resource);
+        }
+    }
+
+    // Update cache with prioritized resources
+    for (auto& resource : prioritizedResources) {
+        cacheResource(resource);
+    }
+}
+
+bool AdaptiveCachingSystem::isNeededImmediately(const Resource& resource) {
+    // Logic to determine if a resource is needed immediately based on game state
+    // Example: Check if a texture is needed for the next frame or an audio for an upcoming event
+    return gameEngine.checkResourceDemand(resource.name);
+}
